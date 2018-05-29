@@ -6,7 +6,6 @@ class Control
     self.coordinates = Coordinates.new(0, 1)
   end
 
-  # catch user input (arrow keys and ESC)
   def user_input
     while true
       input = $stdin.getch
@@ -30,15 +29,11 @@ class Control
         when "\e[D" # left arrow
           self.coordinates = Coordinates.new(0, -1)
         when "\e"
-          Func.game_over
+          game_over
         else
           next
       end
     end
-  end
-
-  def get_direction
-    @coordinates
   end
 
   def game_over

@@ -1,6 +1,8 @@
 class Board
-  BLACKSQ = "\xe2\xac\x9b "
-  WHITESQ = "\xe2\xac\x9c "
+  # BLACKSQ = "\xe2\xac\x9b "
+  # WHITESQ = "\xe2\xac\x9c "
+  BLACKSQ = '**'
+  WHITESQ = " \e[37;3m "
   
   attr_reader :cells
   attr_reader :height_size
@@ -15,7 +17,6 @@ class Board
   end
   
   def create_field
-    # populating two dimensional array
     @cells = []
     (0...@height_size).each do |x|
       @row = []
@@ -29,11 +30,21 @@ class Board
       @cells.push(@row)
     end
   end
+
+  def check(x,y)
+    cells[x][y] == Board::BLACKSQ
+  end
+
+  def field_black(x,y)
+    cells[x][y] = Board::BLACKSQ
+  end
+
+  def field_white(x,y)
+    cells[x][y] = Board::WHITESQ
+  end
   
   def print_field
-    # clear user terminal
     system 'clear'
-    # terminal color -> green
     print "\e[32m"
     puts "SCORE: \e[42m\e[30m #{@score} \e[49m\e[32m\r"
     puts "Use \xe2\x87\x84 \xe2\x87\x85 to move, ESC to quit.\r"
@@ -41,10 +52,8 @@ class Board
       row.each do |cell|
         print cell
       end
-      # !important - carriege return
       print "\n\r"
     end
-    # text == black && background == green
   end
   
 end

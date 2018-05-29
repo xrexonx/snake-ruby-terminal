@@ -1,7 +1,7 @@
 class Snake
-  def initialize(field, rabbit, control)
+  def initialize(field, food, control)
     @field = field
-    @rabbit = rabbit
+    @food = food
     @control = control
 
     @cells = field.cells
@@ -14,7 +14,7 @@ class Snake
     @row = @height_size - 2
     @cell = 1
     @snake = MyLinkedList.new(@row, @cell)
-    (0..3).each do |i| # initialy snake will be 4 squares long
+    (0..3).each do |i|
       @cells[@row][@cell + i] = Board::BLACKSQ
       @snake.add(@row, @cell + i)
     end
@@ -23,13 +23,11 @@ class Snake
   def move(direction)
     @direction = direction
 
-    # find out where is a head and a tail of a snake
     @row_tail = @snake.get_first.x
     @cell_tail = @snake.get_first.y
     @row_head = @snake.get_last.x
     @cell_head = @snake.get_last.y
 
-    # prevent moving backward
     unless @current_direction.nil?
       if @direction.x == @current_direction.x * -1 || @direction.y == @current_direction.y * -1
         @direction = @current_direction
@@ -37,26 +35,29 @@ class Snake
     end
 
     collision
+  end
 
+  private
+
+  def collision
+    collision_x = @row_head + @direction.x
+    collision_y = @cell_head + @direction.y
+    if @field.check(collision_x, collision_y)
+      @control.game_over
+    end
+
+    @field.field_black(collision_x, collision_y)
+    @snake.add(collision_x, collision_y)
+    @current_direction = @direction
     food_collision
   end
 
-  def collision
-    if @cells[@row_head + @direction.x][@cell_head + @direction.y] == Board::BLACKSQ
-      @control.game_over
-    else
-      @cells[@row_head + @direction.x][@cell_head + @direction.y] = Board::BLACKSQ
-      @snake.add(@row_head + @direction.x, @cell_head + @direction.y)
-      @current_direction = @direction
-    end
-  end
-
   def food_collision
-    if @row_head == @rabbit.location.x && @cell_head == @rabbit.location.y
+    if @row_head == @food.location.x && @cell_head == @food.location.y
       @field.score += 1
-      @rabbit.create_rabbit
+      @food.create_food
     else
-      @cells[@row_tail][@cell_tail] = Board::WHITESQ
+      @field.field_white(@row_tail, @cell_tail)
       @snake.delete(@row_tail, @cell_tail)
     end
   end
