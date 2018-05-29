@@ -15,8 +15,8 @@ snake = Snake.new(field, rabbit)
 snake.create_snake()
 
 # reprint field showing snake motion
-speed = 0.19
-snake_thr = Thread.new do
+speed = field.score > 0 ? field.score / 10 : 0.10
+Thread.new do
   loop do
     snake.move(Func.get_direction)
     field.print_field

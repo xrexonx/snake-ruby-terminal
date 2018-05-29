@@ -35,6 +35,8 @@ class Board
     system 'clear'
     # terminal color -> green
     print "\e[32m"
+    puts "SCORE: \e[42m\e[30m #{@score} \e[49m\e[32m\r"
+    puts "Use \xe2\x87\x84 \xe2\x87\x85 to move, ESC to quit.\r"
     @cells.each do |row|
       row.each do |cell|
         print cell
@@ -43,8 +45,6 @@ class Board
       print "\n\r"
     end
     # text == black && background == green
-    puts "SCORE: \e[42m\e[30m #{@score} \e[49m\e[32m\r"
-    puts "Use \xe2\x87\x84 \xe2\x87\x85 to move, ESC to quit.\r"
   end
   
 end
