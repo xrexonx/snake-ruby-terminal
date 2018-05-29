@@ -4,6 +4,7 @@ class Food
     @cells = field.cells
     @height_size = field.height_size
     @width_size = field.width_size
+    create_rabbit
   end
   
   def create_rabbit

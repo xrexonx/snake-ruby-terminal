@@ -1,14 +1,17 @@
 class Snake
-  def initialize(field, rabbit)
+  def initialize(field, rabbit, control)
     @field = field
     @rabbit = rabbit
+    @control = control
 
     @cells = field.cells
     @height_size = field.height_size
     @width_size = field.width_size
+    create_snake
   end
 
   def create_snake
+    @sll = MyLinkedList.new(3, @row, @cell)
     @snake = []
     @row = @height_size - 2
     @cell = 1
@@ -29,19 +32,12 @@ class Snake
 
     # prevent moving backward
     unless @current_direction.nil?
-      if @direction['row'] == @current_direction['row'] * -1 || @direction['cell'] == @current_direction['cell'] * -1
+      if @direction.x == @current_direction.x * -1 || @direction.y == @current_direction.y * -1
         @direction = @current_direction
       end
     end
 
-
-    if @cells[@row_head + @direction['row']][@cell_head + @direction['cell']] == Board::BLACKSQ
-      Func.game_over
-    else
-      @cells[@row_head + @direction['row']][@cell_head + @direction['cell']] = Board::BLACKSQ
-      @snake.push('row' => @row_head + @direction['row'], 'cell' => @cell_head + @direction['cell'])
-      @current_direction = @direction
-    end
+    collision
 
     # remove tail or eat rabbit
     if @row_head == @rabbit.location['row'] && @cell_head == @rabbit.location['cell']
@@ -50,6 +46,16 @@ class Snake
     else
       @cells[@row_tail][@cell_tail] = Board::WHITESQ
       @snake.shift
+    end
+  end
+
+  def collision
+    if @cells[@row_head + @direction.x][@cell_head + @direction.y] == Board::BLACKSQ
+      @control.game_over
+    else
+      @cells[@row_head + @direction.x][@cell_head + @direction.y] = Board::BLACKSQ
+      @snake.push('row' => @row_head + @direction.x, 'cell' => @cell_head + @direction.y)
+      @current_direction = @direction
     end
   end
 

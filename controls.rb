@@ -1,38 +1,48 @@
-module Func
+class Control
 
-  # default snake direction
-  @direction = {'row' => 0, 'cell' => 1}
+  attr_accessor :coordinates
+
+  def initialize
+    self.coordinates = Coordinates.new(0, 1)
+  end
 
   # catch user input (arrow keys and ESC)
-  def Func.user_control
+  def user_input
     while true
       input = $stdin.getch
-      
-      input == "\e" ? input += $stdin.read_nonblock(2) rescue '' : next
-      
+
+      if input == "\e"
+        u_input = $stdin.read_nonblock(2)
+        if u_input != ''
+          input += u_input
+        else
+          next
+        end
+      end
+
       case input
-      when "\e[A" # up arrow
-        @direction = {'row' => -1, 'cell' => 0}
-      when "\e[B" # down arrow
-        @direction = {'row' => 1, 'cell' => 0}
-      when "\e[C" # right arrow
-        @direction = {'row' => 0, 'cell' => 1}
-      when "\e[D" # left arrow
-        @direction = {'row' => 0, 'cell' => -1}
-      when "\e"
-        Func.game_over
-      else
-        next
+        when "\e[A" # up arrow
+          self.coordinates = Coordinates.new(-1, 0)
+        when "\e[B" # down arrow
+          self.coordinates = Coordinates.new(1, 0)
+        when "\e[C" # right arrow
+          self.coordinates = Coordinates.new(0, 1)
+        when "\e[D" # left arrow
+          self.coordinates = Coordinates.new(0, -1)
+        when "\e"
+          Func.game_over
+        else
+          next
       end
     end
   end
-  
-  def Func.get_direction
-    @direction
+
+  def get_direction
+    @coordinates
   end
 
-  def Func.game_over
-    puts "\e[41m\e[30m Game Over \e[0m\n\e[49m\r" 
+  def game_over
+    puts "\e[41m\e[30m Game Over \e[0m\n\e[49m\r"
     exit
   end
 
