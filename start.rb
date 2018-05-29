@@ -5,6 +5,7 @@ require './controls.rb'
 require './linked_list.rb'
 require 'io/console'
 require './coordinates.rb'
+require 'pry'
 
 # puts Func.get_direction
 
