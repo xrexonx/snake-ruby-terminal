@@ -1,53 +1,64 @@
 class Snake
-  def initialize(board, food)
-    @board = board
+  def initialize(field, food, control)
+    @field = field
     @food = food
+    @control = control
 
-    @cells = board.cells
-    @size = board.size
+    @cells = field.cells
+    @height_size = field.height_size
+    @width_size = field.width_size
+    create_snake
   end
 
   def create_snake
-    @snake = []
-    @row = @size - 2
+    @row = @height_size - 2
     @cell = 1
-    (0..3).each do |i| # initialy snake will be 4 squares long
+    @snake = MyLinkedList.new(@row, @cell)
+    (0..3).each do |i|
       @cells[@row][@cell + i] = Board::BLACKSQ
-      @snake[i] = {'row' => @row, 'cell' => @cell + i}
+      @snake.add(@row, @cell + i)
     end
   end
 
   def move(direction)
     @direction = direction
 
-    # find out where is a head and a tail of a snake
-    @row_tail = @snake[0]['row']
-    @cell_tail = @snake[0]['cell']
-    @row_head = @snake[@snake.length - 1]['row']
-    @cell_head = @snake[@snake.length - 1]['cell']
+    @row_tail = @snake.get_first.x
+    @cell_tail = @snake.get_first.y
+    @row_head = @snake.get_last.x
+    @cell_head = @snake.get_last.y
 
-    # prevent moving backward
     unless @current_direction.nil?
-      if @direction['row'] == @current_direction['row'] * -1 || @direction['cell'] == @current_direction['cell'] * -1
+      if @direction.x == @current_direction.x * -1 || @direction.y == @current_direction.y * -1
         @direction = @current_direction
       end
     end
 
-    if @cells[@row_head + @direction['row']][@cell_head + @direction['cell']] == Board::BLACKSQ
-      Controls.game_over
-    else
-      @cells[@row_head + @direction['row']][@cell_head + @direction['cell']] = Board::BLACKSQ
-      @snake.push('row' => @row_head + @direction['row'], 'cell' => @cell_head + @direction['cell'])
-      @current_direction = @direction
+    collision
+  end
+
+  private
+
+  def collision
+    collision_x = @row_head + @direction.x
+    collision_y = @cell_head + @direction.y
+    if @field.check(collision_x, collision_y)
+      @control.game_over
     end
 
-    # remove tail or eat food
-    if @row_head == @food.location['row'] && @cell_head == @food.location['cell']
-      @board.score += 1
+    @field.field_black(collision_x, collision_y)
+    @snake.add(collision_x, collision_y)
+    @current_direction = @direction
+    food_collision
+  end
+
+  def food_collision
+    if @row_head == @food.location.x && @cell_head == @food.location.y
+      @field.score += 1
       @food.create_food
     else
-      @cells[@row_tail][@cell_tail] = Board::WHITESQ
-      @snake.shift
+      @field.field_white(@row_tail, @cell_tail)
+      @snake.delete(@row_tail, @cell_tail)
     end
   end
 

@@ -1,33 +1,25 @@
-# =====================================================
-# Create board/field
-# Create snake and food
-# Start
-# =====================================================
-
-require 'io/console'
-
-require './commands.rb'
-require './controls.rb'
 require './board.rb'
 require './snake.rb'
 require './food.rb'
+require './controls.rb'
+require './linked_list.rb'
+require 'io/console'
+require './coordinates.rb'
 
-board = Board.new(30) # size
-board.create_board
-
+board = Board.new # size
 food = Food.new(board)
-food.create_food
+control = Control.new
+snake = Snake.new(board, food, control)
 
-snake = Snake.new(board, food)
-snake.create_snake
-
-# reprint field showing snake motion
+speed = 0
+speed = board.score > 0 ? speed - 0.01 : 0.10
 Thread.new do
-  while true
-    snake.move(Controls.get_direction)
+  loop do
+    snake.move(control.coordinates)
     board.print_board
-    sleep(0.3) # snake's speed
+
+    sleep(speed)
   end
 end
 
-Controls.user_control
+control.user_input

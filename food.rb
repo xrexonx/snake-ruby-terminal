@@ -1,22 +1,25 @@
 class Food
   attr_reader :location
+
   def initialize(board)
     @cells = board.cells
-    @size = board.size
+    @height_size = board.height_size
+    @width_size = board.width_size
+    create_food
   end
 
   def create_food
     @prng = Random.new
-    @row_food = @prng.rand(1..@size - 2)
+    @x_food = @prng.rand(1..@height_size - 2)
     @prng = Random.new
-    @cell_food = @prng.rand(1..@size - 2)
+    @y_food = @prng.rand(1..@width_size - 2)
 
     # check if rabbit apear on the snake. if so try another random location
-    if @cells[@row_food][@cell_food] == Board::BLACKSQ
+    if @cells[@x_food][@y_food] == Board::BLACKSQ
       create_food
     else
-      @location = {'row' => @row_food, 'cell' => @cell_food}
+      @location = Coordinates.new(@x_food, @y_food)
     end
-    @cells[@row_food][@cell_food] = "\e[31m#{Board::BLACKSQ}\e[0m\e[32m"
+    @cells[@x_food][@y_food] = "\e[31m#{Board::BLACKSQ}\e[0m\e[32m"
   end
 end

@@ -5,20 +5,23 @@ class Board
   WHITESQ = " \e[37;3m "
 
   attr_reader :cells
-  attr_reader :size
+  attr_reader :height_size
+  attr_reader :width_size
   attr_accessor :score
 
-  def initialize(size)
-    @size = size
+  def initialize
+    @height_size = 30
+    @width_size = 40
     @score = 0
+    create_board
   end
 
   def create_board
     @cells = []
-    (0...@size).each do |x|
+    (0...@height_size).each do |x|
       @row = []
-      (0...@size).each do |y|
-        if x.between?(1, @size - 2) && y.between?(1, @size - 2)
+      (0...@width_size).each do |y|
+        if x.between?(1, @height_size-2) && y.between?(1, @width_size-2)
           @row.push(WHITESQ)
         else
           @row.push(BLACKSQ)
@@ -28,22 +31,29 @@ class Board
     end
   end
 
+  def check(x,y)
+    cells[x][y] == Board::BLACKSQ
+  end
+
+  def field_black(x,y)
+    cells[x][y] = Board::BLACKSQ
+  end
+
+  def field_white(x,y)
+    cells[x][y] = Board::WHITESQ
+  end
+
   def print_board
-    # clear user terminal
     system 'clear'
-    # terminal color -> green
     print "\e[32m"
-    # text == black && background == green
     puts "SCORE: \e[42m\e[30m #{@score} \e[49m\e[32m\r"
     puts "Use \xe2\x87\x84 \xe2\x87\x85 to move, ESC to quit.\r"
     @cells.each do |row|
       row.each do |cell|
         print cell
       end
-      # !important - carriege return
       print "\n\r"
     end
-
   end
 
 end

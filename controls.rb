@@ -1,56 +1,42 @@
-module Controls
+class Control
 
-  # default snake direction
-  @direction = {'row' => 0, 'cell' => 1}
+  attr_accessor :coordinates
 
-  # catch user input (arrow keys and ESC)
-  def Controls.user_control
+  def initialize
+    self.coordinates = Coordinates.new(0, 1)
+  end
+
+  def user_input
     while true
-      input = STDIN.getch(min:1)
-      # if STDIN.ready?
-      #   input = STDIN.getch
-      # end
-      # input = STDIN.getc
+      input = $stdin.getch
 
-      input == "\e" ? input += STDIN.read_nonblock(2) rescue '' : next
+      if input == "\e"
+        u_input = $stdin.read_nonblock(2)
+        if u_input != ''
+          input += u_input
+        else
+          next
+        end
+      end
 
       case input
       when "\e[A" # up arrow
-        @direction = {'row' => -1, 'cell' => 0}
+        self.coordinates = Coordinates.new(-1, 0)
       when "\e[B" # down arrow
-        @direction = {'row' => 1, 'cell' => 0}
+        self.coordinates = Coordinates.new(1, 0)
       when "\e[C" # right arrow
-        @direction = {'row' => 0, 'cell' => 1}
+        self.coordinates = Coordinates.new(0, 1)
       when "\e[D" # left arrow
-        @direction = {'row' => 0, 'cell' => -1}
+        self.coordinates = Coordinates.new(0, -1)
       when "\e"
-        Controls.game_over
+        game_over
       else
         next
       end
-
-      # case input
-      # when "w" # up arrow
-      #   @direction = {'row' => -1, 'cell' => 0}
-      # when "s" # down arrow
-      #   @direction = {'row' => 1, 'cell' => 0}
-      # when "d" # right arrow
-      #   @direction = {'row' => 0, 'cell' => 1}
-      # when "a" # left arrow
-      #   @direction = {'row' => 0, 'cell' => -1}
-      # when "\e"
-      #   Controls.game_over
-      # else
-      #   next
-      # end
     end
   end
 
-  def Controls.get_direction
-    @direction
-  end
-
-  def Controls.game_over
+  def game_over
     puts "\e[41m\e[30m Game Over \e[0m\n\e[49m\r"
     exit
   end
